@@ -68,3 +68,13 @@ while read f; do
 	. "$f"
 done < <(find ~/.bash_completion.d/ -type f -name "*completion*.*sh")
 
+function load-scripts() {
+	if [ -d ~/install/_scripts -a -d ~/bin ]; then
+		cd ~/install/_scripts
+		for f in $(\ls -1); do
+			linkName=$(echo $f | rev | cut -d\. -f2- | rev)
+			ln -sf "~/install/_scripts/$f" "~/bin/$linkName"
+		done
+	fi
+}
+export -f load-scripts
