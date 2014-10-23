@@ -64,5 +64,7 @@ shopt -s expand_aliases
 PS1="\n\[\033[1;37m\]\342\224\214[\!]\
  $(if [[ ${EUID} == 0 ]]; then echo '\[\033[01;31m\]\h'; else echo '\[\033[01;35m\]\u\[\033[00;35m\]@\h'; fi)\[\033[1;37m\] \$(if [[ \$? == 0 ]]; then echo \"\[\033[01;32m\]V\"; else echo \"\[\033[01;31m\]X\"; fi)\[\033[1;37m\] \[\033[1;34m\]\w\[\033[1;37m\]\[\033[1;37m\]\n\342\224\224\342\224\200 \$ \[\033[0m\]"
 
-source ~/stef/projects/_github/maven-bash-completion/bash_completion.bash
+while read f; do
+	. "$f"
+done < <(find ~/.bash_completion.d/ -type f -name "*completion*.*sh")
 
