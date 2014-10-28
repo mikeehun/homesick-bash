@@ -1,80 +1,94 @@
 # .bashrc
 
+# uncomment to debug
+#set -x
+
+# expand aliases on non-interactive shell
+shopt -s expand_aliases
+
+# If set, the pattern "**" used in a pathname expansion context will
+# match all files and zero or more directories and subdirectories.
+shopt -s globstar
+
+# If not running interactively, skip the rest
+[ -z "$PS1" ] && return
+
+# if not a login shell, produce a warning
+[ "$(shopt login_shell | cut -f2)" == "off" ] && echo "Warning: not a login shell. configure your terminal!"
+
 # Source global definitions
 if [ -f /etc/bashrc ]; then
 	. /etc/bashrc
 fi
 
-# User specific aliases and functions
-alias grep='grep --color=auto'
-alias tree='tree -C'
-alias ls='ls --group-directories-first --color=always -hF'
-alias l='ls'
-alias robot-pre="TZ=GMT MAVEN_OPTS=\"-Xms2048M  -Xmx2048M -XX:MaxPermSize=2048m -Dfile.encoding=utf-8 -Denvironment=hudson -javaagent:/home/kalantziss/.m2/repository/org/springframework/spring-instrument/3.0.3.RELEASE/spring-instrument-3.0.3.RELEASE.jar\" mvn pre-integration-test"
-alias robot-cargo="TZ=GMT MAVEN_OPTS=\"-Xms2048M -Xdebug -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n -Xmx2048M -XX:MaxPermSize=2048m -Dfile.encoding=utf-8 -Denvironment=hudson -javaagent:/home/kalantziss/.m2/repository/org/springframework/spring-instrument/3.0.3.RELEASE/spring-instrument-3.0.3.RELEASE.jar\"  mvn org.codehaus.cargo:cargo-maven2-plugin:start"
-alias robot-cargo-dcevm="JAVA_HOME=~/.IntelliJIdea13/config/plugins/DCEVM_JRE TZ=GMT MAVEN_OPTS=\"-Xms2048M -Xdebug -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n -Xmx2048M -XX:MaxPermSize=2048m -Dfile.encoding=utf-8 -Denvironment=hudson -javaagent:/home/kalantziss/.m2/repository/org/springframework/spring-instrument/3.0.3.RELEASE/spring-instrument-3.0.3.RELEASE.jar\"  mvn org.codehaus.cargo:cargo-maven2-plugin:start"
-alias robot-run="TZ=GMT mvn com.googlecode.robotframework-maven-plugin:robotframework-maven-plugin:run"
-alias robot-results="google-chrome target/robotframework/log.html"
-alias mvn-cargo="TZ=GMT MAVEN_OPTS=\"-Xms2048M -Xdebug -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n -Xmx2048M -XX:MaxPermSize=2048m -Dfile.encoding=utf-8 -Denvironment=hudson\"  mvn clean install -DskipTests -Pcargo"
-alias calcu='gcalctool'
-alias mongoose='python -m SimpleHTTPServer 9098'
-alias mtail='multitail --config ~/.multitail.conf -n 102400 -m 0 -mb 100MB'
-alias mvntail='mtail -cS maven'
-alias xclip='xclip -selection clipboard'
-alias cpath='pwd | tr -d "\n" | xclip'
-alias cdpath='cd "$(xclip -o)"'
-alias cdmvn='cdpath; mvn-go-up'
-
-function PS_GUAKE() {
-	if ! $(gconftool-2 --get /apps/guake/general/use_vte_titles); then
-		if [ $(echo $STY | grep -c guake) -eq 1 ]; then
-			guake -r "$(whoami)@$(hostname -s)$(pwd)" >/dev/null 2>&1 &
-		fi
-	fi
-}
-
-function mvn-rdebug-test() {
-	mvn clean test -Dmaven.surefire.debug="-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8002 -Xnoagent -Djava.compiler=NONE" -Dcobertura.skip=true -Dfindbugs.skip=true -Dcheckstyle.skip=true -DfailIfNoTests=false -Dtest=$1 -o
-}
-
-function mvn-go-up() {
-	while ! ls pom.xml >/dev/null 2>&1; do
-		[ "$(pwd)" == ~ ] && break;
-		cd ..
-	done
-}
-
-function change() {
-	cd $(pwd | sed "s#/$1/#/$2/#g")
-}
-
-export HISTCONTROL=erasedups
-export HISTSIZE=100000
-export HISTFILESIZE=100000
+# fix history.
+# keeps track with multiple shells open !!!
+# using .bash_logout to erase non-sequencial duplicates.
+export HISTCONTROL=erasedups            # no sequencial duplicate entries
+export HISTSIZE=100000                  # big big history
+export HISTFILESIZE=100000              # big big history
 export HISTIGNORE="&:cd:ls:exit:logout:top:pwd:clear:uptime"
-export PROMPT_COMMAND="history -a;\$(PS_GUAKE)"
+export PROMPT_COMMAND="history -a"      # append history to .bash_history after every command
 
-export -f mvn-go-up
-export -f mvn-rdebug-test
-
+# check the window size after each command and, if necessary,
+# update the values of LINES and COLUMNS.
 shopt -s checkwinsize
-shopt -s globstar
-shopt -s expand_aliases
 
-PS1="\n\[\033[1;37m\]\342\224\214[\!]\
+# make less more friendly for non-text input files, see lesspipe(1)
+[ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
+
+# set variable identifying the chroot you work in (used in the prompt below)
+if [ -z "$debian_chroot" ] && [ -r /etc/debian_chroot ]; then
+	debian_chroot=$(cat /etc/debian_chroot)
+fi
+
+# set a fancy prompt (non-color, unless we know we "want" color)
+case "$TERM" in
+    xterm-color) color_prompt=yes;;
+	xterm-256color) color_prompt=yes;;
+	rxvt-256color) color_prompt=yes;;
+	rxvt-unicode) color_prompt=yes;;
+esac
+
+# uncomment for a colored prompt, if the terminal has the capability; turned
+# off by default to not distract the user: the focus in a terminal window
+# should be on the output of commands, not on the prompt
+#force_color_prompt=yes
+
+if [ -n "$force_color_prompt" ]; then
+    if [ -x /usr/bin/tput ]; then
+		if [ $(tput colors) -ge 8 ]; then
+			color_prompt=yes
+		else
+			color_prompt=
+		fi
+    fi
+fi
+
+if [ "$color_prompt" = yes ]; then
+    #PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
+	PS1="\n\[\033[1;37m\]\342\224\214[\!]\
  $(if [[ ${EUID} == 0 ]]; then echo '\[\033[01;31m\]\h'; else echo '\[\033[01;35m\]\u\[\033[00;35m\]@\h'; fi)\[\033[1;37m\] \$(if [[ \$? == 0 ]]; then echo \"\[\033[01;32m\]V\"; else echo \"\[\033[01;31m\]X\"; fi)\[\033[1;37m\] \[\033[1;34m\]\w\[\033[1;37m\]\[\033[1;37m\]\n\342\224\224\342\224\200 \$ \[\033[0m\]"
+else
+    PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
+fi
+unset force_color_prompt
 
+# FIRST add functions
+if [ -f ~/.bash_functions ]; then
+    . ~/.bash_functions
+fi
+
+# AND THEN aliases
+if [ -f ~/.bash_aliases ]; then
+    . ~/.bash_aliases
+fi
+
+# Load custom bash completions
 while read f; do
 	. "$f"
 done < <(find ~/.bash_completion.d/ -type f -name "*completion*.*sh")
 
-function load-scripts() {
-	if [ -d ~/install/_scripts -a -d ~/bin ]; then
-		cd ~/install/_scripts
-		for f in $(\ls -1); do
-			linkName=$(echo $f | rev | cut -d\. -f2- | rev)
-			ln -sf "~/install/_scripts/$f" "~/bin/$linkName"
-		done
-	fi
-}
-export -f load-scripts
+# Load custom scripts to ~/bin
+load-scripts
+
