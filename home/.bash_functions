@@ -95,7 +95,8 @@ if command -v homesick >/dev/null 2>&1; then
 	function homesick-status-all() {
 		while read hl; do
 			repo=$(echo $hl | tr -s ' ' ' ' | cut -d\  -f1);
-			echo -e "\e[31m--= ${repo} =--\e[39m"
+			#echo -e "\e[31m--= ${repo} =--\e[39m"
+			echo -e "\e[43m--= ${repo} =--\e[39m\e[49m"
 			homesick status $repo;
 			echo
 		done < <(homesick list )
