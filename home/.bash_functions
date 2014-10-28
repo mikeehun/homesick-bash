@@ -49,18 +49,20 @@ function grepkill(){
 	fi
 }
 
-function mvn-rdebug-test() {
-    mvn clean test -Dmaven.surefire.debug="-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8002 -Xnoagent -Djava.compiler=NONE" -Dcobertura.skip=true -Dfindbugs.skip=true -Dcheckstyle.skip=true -DfailIfNoTests=false -Dtest=$1 -o
-}
+if command -v mvn >/dev/null 2>&1; then
+	function mvn-rdebug-test() {
+		mvn clean test -Dmaven.surefire.debug="-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8002 -Xnoagent -Djava.compiler=NONE" -Dcobertura.skip=true -Dfindbugs.skip=true -Dcheckstyle.skip=true -DfailIfNoTests=false -Dtest=$1 -o
+	}
 
-function mvn-go-up() {
-    while ! ls pom.xml >/dev/null 2>&1; do
-        [ "$(pwd)" == ~ ] && break;
-        cd ..
-    done
-}
+	function mvn-go-up() {
+		while ! ls pom.xml >/dev/null 2>&1; do
+			[ "$(pwd)" == ~ ] && break;
+			cd ..
+		done
+	}
+fi
 
-function change() {
+function cd-switch() {
     cd $(pwd | sed "s#/$1/#/$2/#g")
 }
 
@@ -89,3 +91,11 @@ function unload-scripts() {
     fi
 }
 
+if command -v homesick >/dev/null 2>&1; then
+	function homesick-status-all() {
+		while read hl; do
+			repo=$(echo $hl | tr -s ' ' ' ' | cut -d\  -f1);
+			homesick status $repo;
+		done < <(homesick list )
+	}
+fi
