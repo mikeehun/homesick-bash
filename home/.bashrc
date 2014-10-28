@@ -69,6 +69,7 @@ if [ "$color_prompt" = yes ]; then
     #PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
 	PS1="\n\[\033[1;37m\]\342\224\214[\!]\
  $(if [[ ${EUID} == 0 ]]; then echo '\[\033[01;31m\]\h'; else echo '\[\033[01;35m\]\u\[\033[00;35m\]@\h'; fi)\[\033[1;37m\] \$(if [[ \$? == 0 ]]; then echo \"\[\033[01;32m\]V\"; else echo \"\[\033[01;31m\]X\"; fi)\[\033[1;37m\] \[\033[1;34m\]\w\[\033[1;37m\]\[\033[1;37m\]\n\342\224\224\342\224\200 \$ \[\033[0m\]"
+	test -r ~/.dircolors.d/dircolors && eval "$(dircolors -b ~/.dircolors.d/dircolors)" || eval "$(dircolors -b)"
 else
     PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
 fi
