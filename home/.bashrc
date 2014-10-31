@@ -87,8 +87,8 @@ fi
 
 # Load custom bash completions
 while read f; do
-	. "$f"
-done < <(find ~/.bash_completion.d/ -type f -name "*completion*.*sh")
+	[ -x "$f" ] && . "$f"
+done < <(find ~/.bash_completion.d/ -type f -name "*completion*.b*sh")
 
 # Load custom scripts to ~/bin
 load-scripts

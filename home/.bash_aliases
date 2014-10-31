@@ -10,6 +10,7 @@ alias mtail='multitail --config ~/.multitail.conf -n 102400 -m 0 -mb 100MB'
 alias xclip='xclip -selection clipboard'
 alias cpath='pwd | tr -d "\n" | xclip'
 alias cdpath='cd "$(xclip -o)"'
+alias compass-init="compass init --syntax=sass --css-dir=css --javascripts-dir=js --sass-dir=sass --images-dir=images"
 
 # color_prompt is set from ~/.bashrc
 if [ "$color_prompt" == "yes" ]; then

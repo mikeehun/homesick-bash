@@ -20,3 +20,5 @@ if [ -d "$HOME/bin" ] ; then
 	export PATH
 fi
 
+EDITOR='vim'
+export EDITOR
