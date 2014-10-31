@@ -3,7 +3,9 @@
 # User specific aliases and functions
 alias tree='tree -C'
 alias l='ls'
-alias la='ls -la'
+alias la='ls -a'
+alias ll='ls -l'
+alias lla='ls -la'
 alias calcu='gcalctool'
 alias mongoose='python -m SimpleHTTPServer 9098'
 alias mtail='multitail --config ~/.multitail.conf -n 102400 -m 0 -mb 100MB'
