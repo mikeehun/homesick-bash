@@ -92,12 +92,15 @@ function unload-scripts() {
 }
 
 if command -v homesick >/dev/null 2>&1; then
-	function homesick-status-all() {
+	function homesick-all() {
+		[ $# -ne 1 ] && return 1;
+		homesick_cmd=$(homesick | tr -s ' ' ' ' | grep -B1000 "options:" | cut -d\  -f 3 | egrep "^[a-zA-Z]+$")
+		[[ ! $homesick_cmd =~ $1 ]] && echo "Invalid command" && return 2;
 		while read hl; do
 			repo=$(echo $hl | tr -s ' ' ' ' | cut -d\  -f1);
 			#echo -e "\e[31m--= ${repo} =--\e[39m"
 			echo -e "\e[43m--= ${repo} =--\e[39m\e[49m"
-			homesick status $repo;
+			homesick $1 $repo;
 			echo
 		done < <(homesick list )
 	}
