@@ -1,3 +1,6 @@
 [submodule "home/.bash_completion.d/maven"]
 	path = home/.bash_completion.d/maven
 	url = https://github.com/juven/maven-bash-completion.git
+[submodule "home/.bash_completion.d/homesick-completion"]
+	path = home/.bash_completion.d/homesick-completion
+	url = https://github.com/Kidlike/homesick-completion.git
