@@ -93,9 +93,8 @@ function unload-scripts() {
 
 if command -v homesick >/dev/null 2>&1; then
 	function homesick-all() {
-		[ $# -ne 1 ] && return 1;
-		homesick_cmd=$(homesick | tr -s ' ' ' ' | grep -B1000 "options:" | cut -d\  -f 3 | egrep "^[a-zA-Z]+$")
-		[[ ! $homesick_cmd =~ $1 ]] && echo "Invalid command" && return 2;
+		[ $# -ne 1 ] && homesick && return 1;
+		[ $(homesick | tr -s ' ' ' ' | grep -B1000 "options:" | cut -d\  -f 3 | egrep "^[a-zA-Z]+$" | egrep -c "^${1}$") -ne 1 ] && echo "Invalid command" && return 2;
 		while read hl; do
 			repo=$(echo $hl | tr -s ' ' ' ' | cut -d\  -f1);
 			#echo -e "\e[31m--= ${repo} =--\e[39m"
