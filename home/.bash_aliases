@@ -6,6 +6,7 @@ alias l='ls'
 alias la='ls -a'
 alias ll='ls -l'
 alias lla='ls -la'
+alias vim='vim -p'
 alias calcu='gcalctool'
 alias mongoose='python -m SimpleHTTPServer 9098'
 alias mtail='multitail --config ~/.multitail.conf -n 102400 -m 0 -mb 100MB'
@@ -33,6 +34,8 @@ if command -v mvn >/dev/null 2>&1; then
 	alias robot-run="TZ=GMT mvn com.googlecode.robotframework-maven-plugin:robotframework-maven-plugin:run"
 	alias robot-results="google-chrome target/robotframework/log.html"
 	alias mvn-cargo="TZ=GMT MAVEN_OPTS=\"-Xms2048M -Xdebug -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n -Xmx2048M -XX:MaxPermSize=2048m -Dfile.encoding=utf-8 -Denvironment=hudson\"  mvn clean install -DskipTests -Pcargo"
+	alias mvn-dirty="mvn -Dcobertura.skip=true -Dfindbugs.skip=true -Dcheckstyle.skip=true -DfailIfNoTests=false"
+	alias mvn-dirty-install="mvn-dirty -DskipTests -Dmaven.test.skip=true clean install"
 	alias mvntail='mtail -cS maven'
 	alias cdmvn='cdpath; mvn-go-up'
 fi
