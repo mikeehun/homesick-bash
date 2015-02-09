@@ -42,7 +42,7 @@ function grepkill(){
 		filter=$2
 	fi
 	procs=`ps -ef | grep -i "$filter" | grep -v grep | tr -s " " " " | cut -d\  -f 2`
-	if [ ! -z ${procs} ]; then
+	if [ ! -z "${procs}" ]; then
 		kill ${killargs} ${procs}
 	else
 		echo "no processes found";
