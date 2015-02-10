@@ -1,5 +1,16 @@
 #!/bin/bash
 
+function pwd-physical() {
+	logical=$(builtin pwd -L)
+	physical=$(builtin pwd -P)
+
+	if [ "${logical}" == "${physical}" ]; then
+			echo "${logical}"
+	else
+			echo "${logical} -> ${physical}"
+	fi
+}
+
 function whatismyip() {
     curl ipv4.icanhazip.com
 }
@@ -102,3 +113,4 @@ if command -v homesick >/dev/null 2>&1; then
 		done < <(homesick list )
 	}
 fi
+
