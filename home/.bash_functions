@@ -53,7 +53,7 @@ function grepkill(){
 		filter=$2
 	fi
 	procs=`ps -ef | grep -i "$filter" | grep -v grep | tr -s " " " " | cut -d\  -f 2`
-	if [ ! -z ${procs} ]; then
+	if [ ! -z "${procs}" ]; then
 		kill ${killargs} ${procs}
 	else
 		echo "no processes found";
@@ -103,14 +103,38 @@ function unload-scripts() {
 }
 
 if command -v homesick >/dev/null 2>&1; then
-	function homesick-status-all() {
+	function homesick-all() {
+		[ $# -ne 1 ] && homesick && return 1;
+		[ $(homesick | tr -s ' ' ' ' | grep -B1000 "options:" | cut -d\  -f 3 | egrep "^[a-zA-Z]+$" | egrep -c "^${1}$") -ne 1 ] && echo "Invalid command" && return 2;
 		while read hl; do
 			repo=$(echo $hl | tr -s ' ' ' ' | cut -d\  -f1);
 			#echo -e "\e[31m--= ${repo} =--\e[39m"
 			echo -e "\e[43m--= ${repo} =--\e[39m\e[49m"
-			homesick status $repo;
+			homesick $1 $repo;
 			echo
 		done < <(homesick list )
 	}
 fi
+
+function free-swap() {
+	free_data="$(free)"
+	mem_data="$(echo "$free_data" | grep 'Mem:')"
+	free_mem="$(echo "$mem_data" | awk '{print $4}')"
+	buffers="$(echo "$mem_data" | awk '{print $6}')"
+	cache="$(echo "$mem_data" | awk '{print $7}')"
+	total_free=$((free_mem + buffers + cache))
+	used_swap="$(echo "$free_data" | grep 'Swap:' | awk '{print $3}')"
+
+	echo -e "Free memory:\t$total_free kB ($((total_free / 1024)) MB)\nUsed swap:\t$used_swap kB ($((used_swap / 1024)) MB)"
+	if [[ $used_swap -eq 0 ]]; then
+		echo "Congratulations! No swap is in use."
+	elif [[ $used_swap -lt $total_free ]]; then
+		echo "Freeing swap..."
+		sudo swapoff -a
+		sudo swapon -a
+	else
+		echo "Not enough free memory. Exiting."
+		exit 1
+	fi
+}
 
